@@ -19,7 +19,8 @@ import {
   Dimensions,
   Button,
   FlatList,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  TextInput
 } from 'react-native';
 import { SketchCanvas, SketchCanvasRef } from 'rn-perfect-sketch-canvas';
 import api from './api';
@@ -44,6 +45,7 @@ const App = () => {
   ]
   const [wordId, setWordId] = React.useState(0);
   const [result, setResult] = React.useState('');
+  const [inputText, setInputext] = React.useState('');
 
   const CustomPicker = ({ label, data, currentIndex, onSelected }) => {
     return (
@@ -86,6 +88,20 @@ const App = () => {
     );
   }
 
+  const onChange = async (text :number) => {
+    const data = await api.getSample(words[text])
+    canvasRef.current?.reset()
+    setWordId(text)
+    setResult('')
+  };
+
+  const onChangeWord = async () => {
+    const data = await api.getSample(inputText)
+    canvasRef.current?.reset()
+    setWordId(0)
+    setResult('')
+  };
+
   const onCheck = async () => {
     const res = await api.compareStroke(JSON.stringify(canvasRef.current?.toPoints()), width)
     setResult(res.mess)
@@ -121,11 +137,29 @@ const App = () => {
         data={words}
         currentIndex={wordId}
         onSelected={(val) => {
-          api.getSample(words[val])
-          canvasRef.current?.reset()
-          setWordId(val)
-          setResult('')
+          onChange(val)
         }}
+      />
+      <TextInput
+        // style={[
+        // ]}
+        // defaultValue={textValue}
+        maxLength={1}
+        numberOfLines={1}
+        placeholder={"Enter word"}
+        autoCapitalize="none"
+        keyboardType='default'
+        onChangeText={(text) => {
+          setInputext(text)
+        }}
+      />
+      <Button
+        onPress={() => {
+          onChangeWord()
+        }}
+        disabled ={inputText == ''}
+        title="Change"
+        color="blue"
       />
       <Text>{result}</Text>
     </SafeAreaView>

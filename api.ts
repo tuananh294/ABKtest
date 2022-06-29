@@ -47,23 +47,50 @@ class API {
     // console.log('API > request > config: ', config);
 
     const startTime = new Date().getTime();
-    const res = await axios(config);
-
-    const endTime = new Date().getTime();
-    if (url !== this.getUrl('/master-data/list-coins') && isEnableLog) {
-      console.log('-----------------------------');
-      console.log(`[${method?.toUpperCase()}] [${endTime - startTime}ms] [${url}] [${JSON.stringify(_params)}]\n${JSON.stringify(res)}`);
-      console.log('-----------------------------');
-    }
-    if (isCallbackMessage) {
-      return res;
-    } else {
-      if (res.status === 200 || res.status === 201) {
-        return res?.data;
+    //const res = await axios(config);
+    // const endTime = new Date().getTime();
+    // if (url !== this.getUrl('/master-data/list-coins') && isEnableLog) {
+    //   console.log('-----------------------------');
+    //   console.log(`[${method?.toUpperCase()}] [${endTime - startTime}ms] [${url}] [${JSON.stringify(_params)}]\n${JSON.stringify(res)}`);
+    //   console.log('-----------------------------');
+    // }
+    // if (isCallbackMessage) {
+    //   return res;
+    // } else {
+    //   if (res.status === 200 || res.status === 201) {
+    //     return res?.data;
+    //   } else {
+    //     if (res?.data?.message && isMessage) {
+    //     }
+    //     console.log("Error")
+    //     return null;
+    //   }
+    // }
+    try {
+      const res = await axios(config);
+      const endTime = new Date().getTime();
+      if (url !== this.getUrl('/master-data/list-coins') && isEnableLog) {
+        console.log('-----------------------------');
+        console.log(`[${method?.toUpperCase()}] [${endTime - startTime}ms] [${url}] [${JSON.stringify(_params)}]\n${JSON.stringify(res)}`);
+        console.log('-----------------------------');
+      }
+      if (isCallbackMessage) {
+        return res;
       } else {
-        if (res?.data?.message && isMessage) {
+        if (res.status === 200 || res.status === 201) {
+          return res?.data;
+        } else {
+          if (res?.data?.message && isMessage) {
+          }
+          console.log("Error")
+          return null;
         }
-        return null;
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log('Axios error' + error)
+      } else {
+        console.log('Unexpected error')
       }
     }
   }
