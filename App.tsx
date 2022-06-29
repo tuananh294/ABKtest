@@ -20,7 +20,9 @@ import {
   Button,
   FlatList,
   TouchableWithoutFeedback,
-  TextInput
+  TextInput,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import { SketchCanvas, SketchCanvasRef } from 'rn-perfect-sketch-canvas';
 import api from './api';
@@ -88,7 +90,7 @@ const App = () => {
     );
   }
 
-  const onChange = async (text :number) => {
+  const onChange = async (text: number) => {
     const data = await api.getSample(words[text])
     canvasRef.current?.reset()
     setWordId(text)
@@ -120,48 +122,51 @@ const App = () => {
           containerStyle={{ width: width, height: width }}
         />
       </ImageBackground>
-      <Button
-        onPress={() => canvasRef.current?.reset()}
-        title="Reset"
-        color="blue"
-      />
-      <Button
-        onPress={() => {
-          onCheck()
-        }}
-        title="Check"
-        color="blue"
-      />
-      <CustomPicker
-        label="Select Word"
-        data={words}
-        currentIndex={wordId}
-        onSelected={(val) => {
-          onChange(val)
-        }}
-      />
-      <TextInput
-        // style={[
-        // ]}
-        // defaultValue={textValue}
-        maxLength={1}
-        numberOfLines={1}
-        placeholder={"Enter word"}
-        autoCapitalize="none"
-        keyboardType='default'
-        onChangeText={(text) => {
-          setInputext(text)
-        }}
-      />
-      <Button
-        onPress={() => {
-          onChangeWord()
-        }}
-        disabled ={inputText == ''}
-        title="Change"
-        color="blue"
-      />
-      <Text>{result}</Text>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} >
+
+        <Button
+          onPress={() => canvasRef.current?.reset()}
+          title="Reset"
+          color="blue"
+        />
+        <Button
+          onPress={() => {
+            onCheck()
+          }}
+          title="Check"
+          color="blue"
+        />
+        <CustomPicker
+          label="Select Word"
+          data={words}
+          currentIndex={wordId}
+          onSelected={(val) => {
+            onChange(val)
+          }}
+        />
+        <TextInput
+          // style={[
+          // ]}
+          // defaultValue={textValue}
+          maxLength={1}
+          numberOfLines={1}
+          placeholder={"Enter word"}
+          autoCapitalize="none"
+          keyboardType='default'
+          onChangeText={(text) => {
+            setInputext(text)
+          }}
+        />
+        <Button
+          onPress={() => {
+            onChangeWord()
+          }}
+          disabled={inputText == ''}
+          title="Change"
+          color="blue"
+        />
+        <Text>{result}</Text>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
